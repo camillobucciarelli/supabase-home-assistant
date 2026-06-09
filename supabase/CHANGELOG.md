@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2
+
+- Add `public_url` for HTTPS/reverse-proxy deployments such as Cloudflare Tunnel.
+- Document Cloudflare Tunnel configuration.
+
 ## 0.1.1
 
 - Detect Docker socket at either `/var/run/docker.sock` or `/run/docker.sock`.
