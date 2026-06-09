@@ -35,6 +35,12 @@ Runtime files are stored below the add-on `/data` mount:
 
 The add-on logs `docker compose ps` every 60 seconds. If you need to inspect the generated credentials, open the add-on terminal or SSH into the host and inspect the generated `.env` inside the add-on data directory.
 
+Because this add-on needs `docker_api: true`, Home Assistant must run it with **Protection mode disabled**. If Protection mode is enabled, the Docker socket is not mounted and startup fails with an error similar to:
+
+```text
+failed to connect to the docker API at unix:///var/run/docker.sock
+```
+
 For production use, put Supabase behind HTTPS and configure backups before storing important data.
 
 ## Limitations
