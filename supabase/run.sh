@@ -45,12 +45,6 @@ set_env() {
   mv "${tmp_file}" "${ENV_FILE}"
 }
 
-host_data_dir() {
-  local container_id="${HOSTNAME}"
-  docker inspect "${container_id}" \
-    --format '{{range .Mounts}}{{if eq .Destination "/data"}}{{.Source}}{{end}}{{end}}'
-}
-
 detect_docker_socket() {
   local docker_host_path
 
@@ -77,9 +71,40 @@ configure_docker_client() {
   docker info >/dev/null
 }
 
+current_container_id() {
+  local container_id container_hostname container_name expected_name
+
+  if docker inspect "${HOSTNAME}" >/dev/null 2>&1; then
+    echo "${HOSTNAME}"
+    return
+  fi
+
+  expected_name="addon_${HOSTNAME//-/_}"
+
+  while IFS= read -r container_id; do
+    [[ -n "${container_id}" ]] || continue
+
+    container_hostname="$(docker inspect "${container_id}" --format '{{.Config.Hostname}}' 2>/dev/null || true)"
+    container_name="$(docker inspect "${container_id}" --format '{{.Name}}' 2>/dev/null || true)"
+    container_name="${container_name#/}"
+
+    if [[ "${container_hostname}" == "${HOSTNAME}" ]] || [[ "${container_name}" == "${expected_name}" ]]; then
+      echo "${container_id}"
+      return
+    fi
+  done < <(docker ps -aq)
+}
+
+host_data_dir() {
+  local container_id="${1}"
+
+  docker inspect "${container_id}" \
+    --format '{{range .Mounts}}{{if eq .Destination "/data"}}{{.Source}}{{end}}{{end}}'
+}
+
 host_mount_source() {
   local destination="${1}"
-  local container_id="${HOSTNAME}"
+  local container_id="${2}"
 
   docker inspect "${container_id}" \
     --format "{{range .Mounts}}{{if eq .Destination \"${destination}\"}}{{.Source}}{{end}}{{end}}"
@@ -157,7 +182,7 @@ stop_stack() {
 
 main() {
   local supabase_ref public_url public_host public_port site_url dashboard_username
-  local dashboard_password postgres_password docker_socket host_data host_docker_socket
+  local dashboard_password postgres_password docker_socket container_id host_data host_docker_socket
 
   supabase_ref="$(option supabase_ref)"
   public_url="$(option public_url)"
@@ -178,13 +203,20 @@ main() {
 
   configure_docker_client "${docker_socket}"
 
-  host_data="$(host_data_dir)"
+  container_id="$(current_container_id)"
+  if [[ -z "${container_id}" ]]; then
+    log "Unable to identify the add-on container from Docker."
+    log "Current hostname is '${HOSTNAME}', expected Docker name is 'addon_${HOSTNAME//-/_}'."
+    exit 1
+  fi
+
+  host_data="$(host_data_dir "${container_id}")"
   if [[ -z "${host_data}" ]]; then
     log "Unable to detect the host path for /data. docker_api access is required."
     exit 1
   fi
 
-  host_docker_socket="$(host_mount_source "${docker_socket}")"
+  host_docker_socket="$(host_mount_source "${docker_socket}" "${container_id}")"
   [[ -n "${host_docker_socket}" ]] || host_docker_socket="${docker_socket}"
 
   install_supabase_files "${supabase_ref}"

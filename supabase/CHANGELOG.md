@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+
+- Resolve the current add-on container by Docker hostname/name when `HOSTNAME` is not directly inspectable.
+
 ## 0.1.2
 
 - Add `public_url` for HTTPS/reverse-proxy deployments such as Cloudflare Tunnel.
