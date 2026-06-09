@@ -1,0 +1,9 @@
+.DS_Store
+*.log
+
+# Runtime data is stored by Home Assistant under the add-on /data mount.
+supabase/data/
+
+# Local editor files.
+.idea/
+.vscode/

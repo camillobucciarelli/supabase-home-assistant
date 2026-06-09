@@ -1,0 +1,12 @@
+#include <tunables/global>
+
+profile supabase flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+
+  network,
+  capability,
+  file,
+  umount,
+  signal (send) peer=unconfined,
+}
