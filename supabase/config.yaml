@@ -2,7 +2,7 @@ name: Supabase
 slug: supabase
 version: "0.1.0"
 description: Self-hosted Supabase stack managed from Home Assistant.
-url: https://github.com/your-org/supabase-home-assistant/tree/main/supabase
+url: https://github.com/camillobucciarelli/supabase-home-assistant/tree/main/supabase
 arch:
   - amd64
   - aarch64
