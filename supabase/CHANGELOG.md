@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4
+
+- Run Docker Compose from the generated Supabase project directory so relative `COMPOSE_FILE` entries resolve correctly.
+
 ## 0.1.3
 
 - Resolve the current add-on container by Docker hostname/name when `HOSTNAME` is not directly inspectable.

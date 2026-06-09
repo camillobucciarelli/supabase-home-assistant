@@ -167,10 +167,13 @@ configure_supabase() {
 }
 
 compose() {
-  docker compose \
-    --env-file "${ENV_FILE}" \
-    --project-directory "${PROJECT_DIR}" \
-    "$@"
+  (
+    cd "${PROJECT_DIR}"
+    docker compose \
+      --env-file "${ENV_FILE}" \
+      --project-directory "${PROJECT_DIR}" \
+      "$@"
+  )
 }
 
 stop_stack() {
