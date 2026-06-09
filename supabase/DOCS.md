@@ -61,6 +61,14 @@ Because this add-on needs `docker_api: true`, Home Assistant must run it with **
 failed to connect to the docker API at unix:///var/run/docker.sock
 ```
 
+To disable Protection mode:
+
+1. Stop the add-on.
+2. Open your Home Assistant user profile and enable **Advanced mode** if the Protection mode switch is not visible.
+3. Open **Settings > Add-ons > Supabase > Info**.
+4. Turn off **Protection mode**.
+5. Start the add-on again.
+
 For production use, put Supabase behind HTTPS and configure backups before storing important data.
 
 ## Limitations
