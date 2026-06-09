@@ -1,6 +1,6 @@
 name: Supabase
 slug: supabase
-version: "0.1.4"
+version: "0.1.5"
 description: Self-hosted Supabase stack managed from Home Assistant.
 url: https://github.com/camillobucciarelli/supabase-home-assistant/tree/main/supabase
 arch:
@@ -10,14 +10,6 @@ startup: services
 boot: manual
 init: false
 docker_api: true
-ports:
-  8000/tcp: 8000
-  5432/tcp: null
-  6543/tcp: null
-ports_description:
-  8000/tcp: Supabase API gateway and Studio
-  5432/tcp: Supavisor session pooler, optional
-  6543/tcp: Supavisor transaction pooler, optional
 options:
   public_url: http://homeassistant.local:8000
   public_host: homeassistant.local

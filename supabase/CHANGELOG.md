@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.5
+
+- Stop reserving port `8000` from the Home Assistant add-on container.
+- Configure Supabase Kong to publish the selected `public_port` directly.
+
 ## 0.1.4
 
 - Run Docker Compose from the generated Supabase project directory so relative `COMPOSE_FILE` entries resolve correctly.

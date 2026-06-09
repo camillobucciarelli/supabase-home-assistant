@@ -8,7 +8,7 @@ Supabase's official documentation recommends Docker for self-hosting, with at le
 
 - `public_url`: external URL used by browsers and clients. For Cloudflare Tunnel, use the HTTPS public hostname, for example `https://supabase.example.com`.
 - `public_host`: local host name or IP used in logs for the Home Assistant host.
-- `public_port`: local host port for the Supabase API gateway and Studio. The add-on exposes container port `8000/tcp`.
+- `public_port`: local host port published by the Supabase Kong container for the API gateway and Studio.
 - `site_url`: default Auth redirect URL.
 - `dashboard_username`: HTTP basic auth username for Studio.
 - `dashboard_password`: HTTP basic auth password for Studio. If empty, a random password is generated and written to the generated `.env`.
@@ -20,9 +20,7 @@ Supabase's official documentation recommends Docker for self-hosting, with at le
 
 ## Ports
 
-- `8000/tcp`: Supabase gateway and Studio.
-- `5432/tcp`: Supavisor session pooler, disabled by default in Home Assistant port mapping.
-- `6543/tcp`: Supavisor transaction pooler, disabled by default in Home Assistant port mapping.
+The add-on itself does not publish Home Assistant add-on ports. Supabase's Kong container publishes `public_port` directly on the Home Assistant Docker host. This avoids a port conflict between the add-on container and the Supabase Kong container.
 
 ## Cloudflare Tunnel
 

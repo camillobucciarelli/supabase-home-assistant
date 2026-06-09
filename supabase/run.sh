@@ -143,10 +143,11 @@ configure_supabase() {
   local host_data="${1}"
   local host_docker_socket="${2}"
   local public_url="${3}"
-  local site_url="${4}"
-  local dashboard_username="${5}"
-  local dashboard_password="${6}"
-  local postgres_password="${7}"
+  local public_port="${4}"
+  local site_url="${5}"
+  local dashboard_username="${6}"
+  local dashboard_password="${7}"
+  local postgres_password="${8}"
 
   local host_project_dir="${host_data}/supabase/project"
 
@@ -156,6 +157,7 @@ configure_supabase() {
   set_env "COMPOSE_PROJECT_NAME" "${COMPOSE_PROJECT_NAME}"
   set_env "SUPABASE_PUBLIC_URL" "${public_url}"
   set_env "API_EXTERNAL_URL" "${public_url}"
+  set_env "KONG_HTTP_PORT" "${public_port}"
   set_env "SITE_URL" "${site_url}"
   set_env "DASHBOARD_USERNAME" "${dashboard_username}"
   set_env "DASHBOARD_PASSWORD" "${dashboard_password}"
@@ -223,7 +225,7 @@ main() {
   [[ -n "${host_docker_socket}" ]] || host_docker_socket="${docker_socket}"
 
   install_supabase_files "${supabase_ref}"
-  configure_supabase "${host_data}" "${host_docker_socket}" "${public_url}" "${site_url}" \
+  configure_supabase "${host_data}" "${host_docker_socket}" "${public_url}" "${public_port}" "${site_url}" \
     "${dashboard_username}" "${dashboard_password}" "${postgres_password}"
 
   if [[ "$(option enable_analytics)" == "true" ]]; then
