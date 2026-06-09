@@ -64,10 +64,12 @@ failed to connect to the docker API at unix:///var/run/docker.sock
 To disable Protection mode:
 
 1. Stop the add-on.
-2. Open your Home Assistant user profile and enable **Advanced mode** if the Protection mode switch is not visible.
-3. Open **Settings > Add-ons > Supabase > Info**.
+2. Open **Settings > Add-ons** or **Settings > Apps**, depending on your Home Assistant version.
+3. Open **Supabase > Info**.
 4. Turn off **Protection mode**.
 5. Start the add-on again.
+
+Recent Home Assistant versions are removing the old **Advanced mode** user-profile toggle. If the Protection mode switch is still not visible in the UI, disable it through the Supervisor API or Home Assistant CLI from the host.
 
 For production use, put Supabase behind HTTPS and configure backups before storing important data.
 
