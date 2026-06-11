@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.6
+
+- Generate Supabase `sb_publishable` and `sb_secret` API keys during bootstrap.
+- Enable Supabase's asymmetric JWT key configuration when the upstream helper is available.
+- Install Node.js in the add-on image so Supabase's key generation helper can run locally.
+
 ## 0.1.5
 
 - Stop reserving port `8000` from the Home Assistant add-on container.

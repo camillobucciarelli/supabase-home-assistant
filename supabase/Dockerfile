@@ -8,6 +8,7 @@ RUN apk add --no-cache \
     docker-cli-compose \
     git \
     jq \
+    nodejs \
     openssl
 
 COPY run.sh /run.sh

@@ -16,6 +16,30 @@ option() {
   jq -r --arg key "$1" '.[$key] // empty' "${OPTIONS_FILE}"
 }
 
+env_value() {
+  local key="${1}"
+
+  if [[ ! -f "${ENV_FILE}" ]]; then
+    return
+  fi
+
+  awk -F= -v key="${key}" '
+    $1 == key {
+      sub(/^[^=]*=/, "")
+      print
+      exit
+    }
+  ' "${ENV_FILE}"
+}
+
+env_has_value() {
+  local key="${1}"
+  local value
+
+  value="$(env_value "${key}")"
+  [[ -n "${value}" ]]
+}
+
 random_alnum() {
   local length="${1}"
   LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c "${length}"
@@ -136,7 +160,31 @@ install_supabase_files() {
 
   log "Generating Supabase secrets"
   (cd "${PROJECT_DIR}" && sh utils/generate-keys.sh)
-  (cd "${PROJECT_DIR}" && sh utils/add-new-auth-keys.sh)
+  ensure_new_auth_keys
+}
+
+ensure_new_auth_keys() {
+  local missing_keys=false
+
+  for key in SUPABASE_PUBLISHABLE_KEY SUPABASE_SECRET_KEY ANON_KEY_ASYMMETRIC SERVICE_ROLE_KEY_ASYMMETRIC JWT_KEYS JWT_JWKS; do
+    if ! env_has_value "${key}"; then
+      missing_keys=true
+      break
+    fi
+  done
+
+  if [[ "${missing_keys}" != "true" ]]; then
+    return
+  fi
+
+  if [[ ! -x "${PROJECT_DIR}/utils/add-new-auth-keys.sh" && ! -f "${PROJECT_DIR}/utils/add-new-auth-keys.sh" ]]; then
+    log "New Supabase auth key helper not found at ${PROJECT_DIR}/utils/add-new-auth-keys.sh."
+    log "Update supabase_ref or recreate the generated Supabase project to enable sb_publishable/sb_secret keys."
+    return
+  fi
+
+  log "Generating new Supabase auth keys and enabling asymmetric JWT verification"
+  (cd "${PROJECT_DIR}" && sh utils/add-new-auth-keys.sh --update-env)
 }
 
 configure_supabase() {
@@ -225,6 +273,7 @@ main() {
   [[ -n "${host_docker_socket}" ]] || host_docker_socket="${docker_socket}"
 
   install_supabase_files "${supabase_ref}"
+  ensure_new_auth_keys
   configure_supabase "${host_data}" "${host_docker_socket}" "${public_url}" "${public_port}" "${site_url}" \
     "${dashboard_username}" "${dashboard_password}" "${postgres_password}"
 

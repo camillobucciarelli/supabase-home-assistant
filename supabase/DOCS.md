@@ -53,6 +53,14 @@ Runtime files are stored below the add-on `/data` mount:
 
 The add-on logs `docker compose ps` every 60 seconds. If you need to inspect the generated credentials, open the add-on terminal or SSH into the host and inspect the generated `.env` inside the add-on data directory.
 
+## API keys and Auth signing
+
+On first bootstrap with a current Supabase `supabase_ref`, the add-on runs Supabase's `utils/add-new-auth-keys.sh --update-env` helper after the legacy key generator. This writes the new `SUPABASE_PUBLISHABLE_KEY` and `SUPABASE_SECRET_KEY` values to the generated `.env`, enables `JWT_KEYS` for Auth, and configures `JWT_JWKS` for PostgREST, Realtime, and Storage.
+
+Use `SUPABASE_PUBLISHABLE_KEY` for browser/client code instead of the legacy `ANON_KEY`. Use `SUPABASE_SECRET_KEY` only in trusted server-side code instead of the legacy `SERVICE_ROLE_KEY`.
+
+The add-on checks for these generated values on startup and does not regenerate them if they already exist. Regenerating the asymmetric key pair invalidates ES256 user sessions, so rotate intentionally with Supabase's upstream helper inside `/data/supabase/project` when needed.
+
 Because this add-on needs `docker_api: true`, Home Assistant must run it with **Protection mode disabled**. If Protection mode is enabled, the Docker socket is not mounted and startup fails with an error similar to:
 
 ```text
