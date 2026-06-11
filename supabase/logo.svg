@@ -1,0 +1,5 @@
+<svg fill="none" viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="240" rx="32" fill="#101010"/>
+  <path fill="#3FCF8E" d="M140.107 45.015c-.08-5.259-6.72-7.52-9.995-3.397L80.715 103.756c-5.835 7.344-.608 18.16 8.773 18.16h51.088l.603 40.053c.075 5.253 6.715 7.509 9.989 3.392l49.398-62.133c5.829-7.333.603-18.149-8.774-18.149h-51.424l-.261-40.064Z"/>
+  <text x="232" y="139" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700" letter-spacing="0">Supabase</text>
+</svg>
