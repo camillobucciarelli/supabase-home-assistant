@@ -196,6 +196,14 @@ configure_supabase() {
   local dashboard_username="${6}"
   local dashboard_password="${7}"
   local postgres_password="${8}"
+  local enable_email_signup="${9}"
+  local enable_email_autoconfirm="${10}"
+  local smtp_host="${11}"
+  local smtp_port="${12}"
+  local smtp_user="${13}"
+  local smtp_password="${14}"
+  local smtp_admin_email="${15}"
+  local smtp_sender_name="${16}"
 
   local host_project_dir="${host_data}/supabase/project"
 
@@ -211,6 +219,14 @@ configure_supabase() {
   set_env "DASHBOARD_PASSWORD" "${dashboard_password}"
   set_env "POSTGRES_PASSWORD" "${postgres_password}"
   set_env "DOCKER_SOCKET_LOCATION" "${host_docker_socket}"
+  set_env "ENABLE_EMAIL_SIGNUP" "${enable_email_signup}"
+  set_env "ENABLE_EMAIL_AUTOCONFIRM" "${enable_email_autoconfirm}"
+  set_env "SMTP_HOST" "${smtp_host}"
+  set_env "SMTP_PORT" "${smtp_port}"
+  set_env "SMTP_USER" "${smtp_user}"
+  set_env "SMTP_PASS" "${smtp_password}"
+  set_env "SMTP_ADMIN_EMAIL" "${smtp_admin_email}"
+  set_env "SMTP_SENDER_NAME" "${smtp_sender_name}"
 
   find "${PROJECT_DIR}" -maxdepth 1 -name 'docker-compose*.yml' -print0 |
     xargs -0 sed -i "s#\\./volumes/#${host_project_dir}/volumes/#g"
@@ -236,6 +252,8 @@ stop_stack() {
 main() {
   local supabase_ref public_url public_host public_port site_url dashboard_username
   local dashboard_password postgres_password docker_socket container_id host_data host_docker_socket
+  local enable_email_signup enable_email_autoconfirm smtp_host smtp_port smtp_user
+  local smtp_password smtp_admin_email smtp_sender_name
 
   supabase_ref="$(option supabase_ref)"
   public_url="$(option public_url)"
@@ -245,6 +263,18 @@ main() {
   dashboard_username="$(option dashboard_username)"
   dashboard_password="$(option dashboard_password)"
   postgres_password="$(option postgres_password)"
+  enable_email_signup="$(option enable_email_signup)"
+  enable_email_autoconfirm="$(option enable_email_autoconfirm)"
+  smtp_host="$(option smtp_host)"
+  smtp_port="$(option smtp_port)"
+  smtp_user="$(option smtp_user)"
+  smtp_password="$(option smtp_password)"
+  smtp_admin_email="$(option smtp_admin_email)"
+  smtp_sender_name="$(option smtp_sender_name)"
+  [[ -n "${enable_email_signup}" ]] || enable_email_signup="true"
+  [[ -n "${enable_email_autoconfirm}" ]] || enable_email_autoconfirm="false"
+  [[ -n "${smtp_port}" ]] || smtp_port="587"
+  [[ -n "${smtp_sender_name}" ]] || smtp_sender_name="Supabase"
 
   docker_socket="$(detect_docker_socket)"
   if [[ -z "${docker_socket}" ]]; then
@@ -275,7 +305,9 @@ main() {
   install_supabase_files "${supabase_ref}"
   ensure_new_auth_keys
   configure_supabase "${host_data}" "${host_docker_socket}" "${public_url}" "${public_port}" "${site_url}" \
-    "${dashboard_username}" "${dashboard_password}" "${postgres_password}"
+    "${dashboard_username}" "${dashboard_password}" "${postgres_password}" "${enable_email_signup}" \
+    "${enable_email_autoconfirm}" "${smtp_host}" "${smtp_port}" "${smtp_user}" "${smtp_password}" \
+    "${smtp_admin_email}" "${smtp_sender_name}"
 
   if [[ "$(option enable_analytics)" == "true" ]]; then
     (cd "${PROJECT_DIR}" && sh run.sh config add logs)

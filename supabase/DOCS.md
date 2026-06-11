@@ -13,6 +13,14 @@ Supabase's official documentation recommends Docker for self-hosting, with at le
 - `dashboard_username`: HTTP basic auth username for Studio.
 - `dashboard_password`: HTTP basic auth password for Studio. If empty, a random password is generated and written to the generated `.env`.
 - `postgres_password`: Postgres password. If empty, a random password is generated and written to the generated `.env`.
+- `enable_email_signup`: enables email/password signups in Supabase Auth.
+- `enable_email_autoconfirm`: when `false`, new email users must confirm their email through SMTP before signing in. When `true`, users are confirmed immediately and no confirmation email is required.
+- `smtp_host`: SMTP server host used by Supabase Auth to send confirmation, invite, recovery, and email-change messages.
+- `smtp_port`: SMTP server port. Common values are `587` for STARTTLS and `465` for SMTPS.
+- `smtp_user`: SMTP username.
+- `smtp_password`: SMTP password or app password.
+- `smtp_admin_email`: sender email address, for example `noreply@example.com`.
+- `smtp_sender_name`: sender display name.
 - `supabase_ref`: git ref fetched from `https://github.com/supabase/supabase`. Use `master` for the current upstream compose files or pin a commit/tag for reproducibility.
 - `enable_analytics`: enables Supabase Logs & Analytics through the upstream `run.sh config add logs` helper.
 - `recreate_on_start`: force-recreates containers on each add-on start.
@@ -40,6 +48,25 @@ https://supabase.example.com -> http://homeassistant.local:8000
 ```
 
 If your tunnel runs outside the Home Assistant host, replace `homeassistant.local` with the Home Assistant machine IP address, for example `http://192.168.1.50:8000`.
+
+## Auth email delivery
+
+Supabase Auth needs a real SMTP server to send signup confirmation emails. Configure these add-on options before relying on email confirmation:
+
+```yaml
+enable_email_signup: true
+enable_email_autoconfirm: false
+smtp_host: smtp.example.com
+smtp_port: 587
+smtp_user: noreply@example.com
+smtp_password: your-smtp-password
+smtp_admin_email: noreply@example.com
+smtp_sender_name: Supabase
+```
+
+After changing SMTP settings, restart the add-on. The add-on writes these values to `/data/supabase/project/.env` as `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_ADMIN_EMAIL`, and `SMTP_SENDER_NAME`.
+
+If confirmation emails still do not arrive, check the `supabase-auth` container logs. Typical causes are a wrong SMTP password, a provider blocking basic SMTP, an unreachable SMTP host from the Home Assistant machine, or `site_url` / `public_url` not matching the URL users use to open Supabase.
 
 ## Data
 

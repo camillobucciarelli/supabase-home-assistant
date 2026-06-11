@@ -1,6 +1,6 @@
 name: Supabase
 slug: supabase
-version: "0.1.6"
+version: "0.1.7"
 description: Self-hosted Supabase stack managed from Home Assistant.
 url: https://github.com/camillobucciarelli/supabase-home-assistant/tree/main/supabase
 arch:
@@ -18,6 +18,14 @@ options:
   dashboard_username: supabase
   dashboard_password: ""
   postgres_password: ""
+  enable_email_signup: true
+  enable_email_autoconfirm: false
+  smtp_host: ""
+  smtp_port: 587
+  smtp_user: ""
+  smtp_password: ""
+  smtp_admin_email: ""
+  smtp_sender_name: Supabase
   supabase_ref: master
   enable_analytics: false
   recreate_on_start: false
@@ -30,6 +38,14 @@ schema:
   dashboard_username: str
   dashboard_password: password
   postgres_password: password
+  enable_email_signup: bool
+  enable_email_autoconfirm: bool
+  smtp_host: str
+  smtp_port: port
+  smtp_user: str
+  smtp_password: password
+  smtp_admin_email: str
+  smtp_sender_name: str
   supabase_ref: str
   enable_analytics: bool
   recreate_on_start: bool

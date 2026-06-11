@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.7
+
+- Add Supabase Auth email and SMTP settings to the add-on configuration.
+- Write SMTP settings to the generated Supabase `.env` on startup.
+
 ## 0.1.6
 
 - Generate Supabase `sb_publishable` and `sb_secret` API keys during bootstrap.
